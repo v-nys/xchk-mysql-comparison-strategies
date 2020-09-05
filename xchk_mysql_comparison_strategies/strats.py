@@ -1,4 +1,6 @@
-from xchk_core.strats import CheckingPredicate, Strategy, OutcomeComponent, OutcomeAnalysis, StratInstructions
+import subprocess
+
+from xchk_core.strats import *
 
 # TODO: aanpassen
 MYSQL_PW = 'in-het-echt-geheim'
@@ -32,11 +34,11 @@ class ExecutedScriptHasMatchingOutputCheck(CheckingPredicate):
 
     def check_submission(self,submission,student_path,desired_outcome,init_check_number,ancestor_has_alternatives,parent_is_negation=False,open=open):
         entry = f'{submission.exercise.slug}.sql'
-        with open(model_path) as fh:
+        with open(self.model_path) as fh:
             model_script_result = subprocess.run(unspecified_db_cmd,text=True,input=fh.read(), capture_output=True)
         with open(os.path.join(student_path,entry)) as fh:
             student_script_result = subprocess.run(unspecified_db_cmd,text=True,input=fh.read(), capture_output=True)
-        same_outputs = model_script.stdout == student_script.stdout and model_script.stderr == student_script.stderr
+        same_outputs = model_script_result.stdout == student_script_result.stdout and model_script_result.stderr == student_script_result.stderr
         if desired_outcome and not same_outputs:
             component = OutcomeComponent(component_number=init_check_number,
                                          outcome=False,
@@ -70,6 +72,6 @@ class MySQLCalibrationStrategy(Strategy):
         self.model_calibration = model_calibration
 
     def check_submission(self,submission,student_path):
-        subprocess.run(unspecified_db_cmd,text=True,input=self.student_calibration))
-        subprocess.run(unspecified_db_cmd,text=True,input=self.model_calibration))
+        subprocess.run(unspecified_db_cmd,text=True,input=self.student_calibration)
+        subprocess.run(unspecified_db_cmd,text=True,input=self.model_calibration)
         return super().check_submission(submission,student_path)
