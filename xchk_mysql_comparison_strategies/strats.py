@@ -41,7 +41,7 @@ class ExecutedScriptHasMatchingOutputCheck(CheckingPredicate):
             component = OutcomeComponent(component_number=init_check_number,
                                          outcome=False,
                                          desired_outcome=desired_outcome,
-                                         # TODO: kan misschien diff gebruiken?
+                                         # TODO: kan verschil beter in de verf zetten
                                          rendered_data=f'<p>Jouw script produceert een andere output dan de modeloplossing. Jouw script produceert op de output stream:<br>{student_script_result.stdout}<br>Jouw script produceert op de error stream:<br>{student_script_result.stderr}</p><p>Het modelscript produceert op de output stream:<br>{model_script_result.stdout}<br>He tmodelscript produceert op de error stream:<br>{model_script_result.stderr}</p>',
                                          acceptable_to_ancestor=ancestor_has_alternatives)
         elif not desired_outcome and same_outputs:
@@ -62,3 +62,14 @@ class ExecutedScriptHasMatchingOutputCheck(CheckingPredicate):
 
 # if desired, define strategies by subclassing Strategy
 # override __init__ so that refusing_check and accepting_check are hardwired
+class MySQLCalibrationStrategy(Strategy):
+
+    def __init__(self,refusing_check=Negation(TrueCheck()),accepting_check=Negation(TrueCheck()),student_calibration=None,model_calibration=None):
+        super().__init__(refusing_check,accepting_check)
+        self.student_calibration = student_calibration
+        self.model_calibration = model_calibration
+
+    def check_submission(self,submission,student_path):
+        subprocess.run(unspecified_db_cmd,text=True,input=self.student_calibration))
+        subprocess.run(unspecified_db_cmd,text=True,input=self.model_calibration))
+        return super().check_submission(submission,student_path)
