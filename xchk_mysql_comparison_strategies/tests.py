@@ -9,7 +9,8 @@ import xchk_mysql_comparison_strategies.strats as strats
 
 original_unspecified_db_cmd = strats.unspecified_db_cmd
 
-TEST_CONTAINER_NAME = 'strategytestmysql'
+# assumes a container with port forwarding is in place
+TEST_CONTAINER_NAME = '127.0.0.1'
 TEST_CONTAINER_PORT = '3307'
 TEST_CONTAINER_PW = 'my-secret-pw'
 
